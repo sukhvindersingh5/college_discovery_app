@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { Suspense, useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 interface College { id: number; name: string; location: string; state: string; type: string; category: string; fees_per_year: number; rating: number; ranking_nirf: number; courses: string[]; placement_avg_lpa: number; placement_percent: number; image_url: string; description: string; }
 interface Pagination { total: number; totalPages: number; currentPage: number; hasNext: boolean; hasPrev: boolean; }
 
-export default function CollegesPage() {
+function CollegesContent() {
   const searchParams = useSearchParams();
   const { token } = useAuth();
   const [colleges, setColleges] = useState<College[]>([]);
@@ -133,5 +133,13 @@ export default function CollegesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CollegesPage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>Loading colleges...</div>}>
+      <CollegesContent />
+    </Suspense>
   );
 }

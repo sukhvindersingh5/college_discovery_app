@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import Link from 'next/link';
@@ -28,7 +28,7 @@ function getBetter(field: typeof FIELDS[0], colleges: College[]) {
   return field.better === 'lower' ? Math.min(...vals) : Math.max(...vals);
 }
 
-export default function ComparePage() {
+function CompareContent() {
   const searchParams = useSearchParams();
   const [colleges, setColleges] = useState<College[]>([]);
   const [allColleges, setAllColleges] = useState<College[]>([]);
@@ -131,5 +131,13 @@ export default function ComparePage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ComparePage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>Loading comparison...</div>}>
+      <CompareContent />
+    </Suspense>
   );
 }
