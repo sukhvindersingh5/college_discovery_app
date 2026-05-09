@@ -109,4 +109,6 @@ npm run seed
 
 ---
 
-*Built with ❤️ for the 2026 Internship Task.*
+
+
+Live Link- https://college-discovery-app-ztey.vercel.app/
