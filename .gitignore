@@ -10,3 +10,4 @@ build/
 *.log
 .DS_Store
 data/
+PROJECT_DOCUMENTATION.md

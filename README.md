@@ -2,7 +2,11 @@
 
 > Discover, compare, and shortlist the best colleges in India — powered by an AI Chatbot, real placement data, and a beautiful dark UI.
 
-**Live Demo** → [college-discovery-app-ztey.vercel.app](https://college-discovery-app-ztey.vercel.app/)
+## 🌐 Live URLs
+
+- **Live Frontend App**: [https://college-discovery-app-ztey.vercel.app](https://college-discovery-app-ztey.vercel.app)
+- **Live Backend API**: [https://college-discovery-app-00b6.onrender.com](https://college-discovery-app-00b6.onrender.com)
+- **Backend Health Check**: [https://college-discovery-app-00b6.onrender.com/health](https://college-discovery-app-00b6.onrender.com/health)
 
 ---
 
@@ -206,10 +210,11 @@ PORT=5000
 
 ### Frontend → Vercel
 
-Connect the repo to Vercel and set:
+Connect the repo to Vercel and set in Environment Variables:
 ```
-NEXT_PUBLIC_API_URL=https://your-render-backend-url.onrender.com
+API_URL=https://college-discovery-app-00b6.onrender.com
 ```
+*(Uses Next.js server-side proxy `/api/[...path]` so the backend URL remains secure and hidden from the browser).*
 
 ---
 
