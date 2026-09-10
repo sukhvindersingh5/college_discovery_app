@@ -48,7 +48,7 @@ export const getSavedIds = async (req: AuthRequest, res: Response): Promise<void
   try {
     const { data, error } = await supabase.from('saved_colleges').select('college_id').eq('user_id', req.userId!);
     if (error) throw error;
-    res.json({ ids: (data || []).map(r => r.college_id) });
+    res.json({ ids: (data || []).map((r: any) => r.college_id) });
   } catch (err) {
     console.error('getSavedIds error:', err);
     res.status(500).json({ error: 'Failed to fetch saved IDs' });

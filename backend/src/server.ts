@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import collegeRoutes from './routes/colleges';
 import authRoutes from './routes/auth';
 import savedRoutes from './routes/saved';
+import aiRoutes from './routes/ai';
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/colleges', collegeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/saved', savedRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 404 handler
 app.use((_req, res) => {

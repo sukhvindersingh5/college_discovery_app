@@ -3,6 +3,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import Link from 'next/link';
+import AIChatModal from '@/components/AIChatModal';
 
 interface College { id: number; name: string; location: string; type: string; category: string; fees_per_year: number; total_fees: number; rating: number; ranking_nirf: number; established: number; courses: string[]; placement_avg_lpa: number; placement_highest_lpa: number; placement_percent: number; website: string; }
 
@@ -34,6 +35,7 @@ function CompareContent() {
   const [allColleges, setAllColleges] = useState<College[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   useEffect(() => {
     const ids = searchParams.get('ids');
@@ -51,13 +53,42 @@ function CompareContent() {
   const addCollege = (id: number) => { if (!selectedIds.includes(id) && selectedIds.length < 3) setSelectedIds(prev => [...prev, id]); };
   const removeCollege = (id: number) => setSelectedIds(prev => prev.filter(x => x !== id));
 
+  const aiQuery = colleges.length >= 2
+    ? `Which college is better between ${colleges.map(c => c.name).join(' and ')} for CSE and overall placements?`
+    : '';
+
   return (
     <div style={{ minHeight: '100vh', padding: '2rem 1.5rem' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{ marginBottom: '2rem' }}>
-          <Link href="/colleges" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem' }}>← Back to Colleges</Link>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, marginTop: 8, marginBottom: 4 }}>⚖️ Compare Colleges</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Select 2–3 colleges to compare side by side</p>
+        <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
+          <div>
+            <Link href="/colleges" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem' }}>← Back to Colleges</Link>
+            <h1 style={{ fontSize: '2rem', fontWeight: 800, marginTop: 8, marginBottom: 4 }}>⚖️ Compare Colleges</h1>
+            <p style={{ color: 'var(--text-secondary)' }}>Select 2–3 colleges to compare side by side</p>
+          </div>
+
+          {colleges.length >= 2 && (
+            <button
+              onClick={() => setAiModalOpen(true)}
+              style={{
+                padding: '0.75rem 1.5rem',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                boxShadow: '0 4px 20px rgba(37, 99, 235, 0.4)',
+              }}
+            >
+              <span>⚡</span>
+              <span>Ask AI to Compare</span>
+            </button>
+          )}
         </div>
 
         {/* College Selector */}
@@ -130,6 +161,13 @@ function CompareContent() {
           </div>
         )}
       </div>
+
+      <AIChatModal
+        isOpen={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+        initialQuery={aiQuery}
+        contextCollegeIds={selectedIds}
+      />
     </div>
   );
 }

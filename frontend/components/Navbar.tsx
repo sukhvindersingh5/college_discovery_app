@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { useState, useEffect } from 'react';
+import AIChatModal from './AIChatModal';
 
 export default function Navbar() {
   const { user, logout, isLoggedIn } = useAuth();
@@ -10,6 +11,7 @@ export default function Navbar() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -22,35 +24,57 @@ export default function Navbar() {
   const handleLogout = () => { logout(); router.push('/'); };
 
   return (
-    <nav style={{
-      position: 'sticky', top: 0, zIndex: 100,
-      background: 'rgba(5, 11, 24, 0.85)',
-      backdropFilter: 'blur(20px)',
-      borderBottom: '1px solid var(--border)',
-      padding: '0 1.5rem',
-    }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
-        {/* Logo */}
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 24 }}>🎓</span>
-          <span style={{ fontWeight: 800, fontSize: '1.25rem', background: 'linear-gradient(135deg, #60a5fa, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            CollegeQuest
-          </span>
-        </Link>
+    <>
+      <nav style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        background: 'rgba(5, 11, 24, 0.85)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid var(--border)',
+        padding: '0 1.5rem',
+      }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+          {/* Logo */}
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 24 }}>🎓</span>
+            <span style={{ fontWeight: 800, fontSize: '1.25rem', background: 'linear-gradient(135deg, #60a5fa, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              CollegeQuest
+            </span>
+          </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map(link => (
-            <Link key={link.href} href={link.href} style={{
-              padding: '0.5rem 1rem', borderRadius: 10, textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500,
-              color: pathname === link.href ? 'var(--primary)' : 'var(--text-secondary)',
-              background: pathname === link.href ? 'rgba(59,130,246,0.1)' : 'transparent',
-              transition: 'all 0.2s',
-            }}>
-              {link.label}
-            </Link>
-          ))}
-        </div>
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map(link => (
+              <Link key={link.href} href={link.href} style={{
+                padding: '0.5rem 1rem', borderRadius: 10, textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500,
+                color: pathname === link.href ? 'var(--primary)' : 'var(--text-secondary)',
+                background: pathname === link.href ? 'rgba(59,130,246,0.1)' : 'transparent',
+                transition: 'all 0.2s',
+              }}>
+                {link.label}
+              </Link>
+            ))}
+            <button
+              onClick={() => setAiModalOpen(true)}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: 10,
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(124, 58, 237, 0.2))',
+                color: '#60a5fa',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginLeft: 4,
+                transition: 'all 0.2s',
+              }}
+            >
+              <span>🤖</span>
+              <span>Ask AI</span>
+            </button>
+          </div>
 
         {/* Auth Desktop */}
         <div className="hidden md:flex items-center gap-3 min-w-[160px]">
@@ -88,6 +112,27 @@ export default function Navbar() {
             </Link>
           ))}
           <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingLeft: '1rem', paddingRight: '1rem' }}>
+            <button
+              onClick={() => { setAiModalOpen(true); setMenuOpen(false); }}
+              style={{
+                width: '100%',
+                padding: '0.75rem 1rem',
+                borderRadius: 8,
+                border: '1px solid rgba(59, 130, 246, 0.4)',
+                background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(124, 58, 237, 0.3))',
+                color: '#60a5fa',
+                fontWeight: 600,
+                fontSize: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                cursor: 'pointer',
+              }}
+            >
+              <span>🤖</span>
+              <span>Ask AI Assistant</span>
+            </button>
             {mounted && isLoggedIn ? (
               <>
                 <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>👋 {user?.name}</span>
@@ -103,5 +148,8 @@ export default function Navbar() {
         </div>
       )}
     </nav>
-  );
+
+    <AIChatModal isOpen={aiModalOpen} onClose={() => setAiModalOpen(false)} />
+  </>
+);
 }

@@ -3,6 +3,7 @@ import { use, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import Link from 'next/link';
+import AIChatModal from '@/components/AIChatModal';
 
 interface College {
   id: number; name: string; location: string; state: string; type: string; category: string;
@@ -19,6 +20,7 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   useEffect(() => {
     api.get(`/api/colleges/${id}`).then(d => { setCollege(d.college || null); setLoading(false); });
@@ -80,12 +82,32 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
               <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>/ 5.0</span>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button onClick={handleSave} className={saved ? 'btn-accent' : 'btn-secondary'}>{saved ? '🔖 Saved' : '🔖 Save College'}</button>
-            <Link href={`/compare?ids=${college.id}`}><button className="btn-primary">⚖️ Compare</button></Link>
-            {college.website && <a href={college.website} target="_blank" rel="noopener noreferrer"><button className="btn-secondary">🌐 Website</button></a>}
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <button onClick={handleSave} className={saved ? 'btn-accent' : 'btn-secondary'}>{saved ? '🔖 Saved' : '🔖 Save College'}</button>
+              <Link href={`/compare?ids=${college.id}`}><button className="btn-primary">⚖️ Compare</button></Link>
+              <button
+                onClick={() => setAiModalOpen(true)}
+                style={{
+                  padding: '0.75rem 1.25rem',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  boxShadow: '0 4px 15px rgba(37, 99, 235, 0.4)',
+                }}
+              >
+                <span>🤖</span>
+                <span>Ask AI</span>
+              </button>
+              {college.website && <a href={college.website} target="_blank" rel="noopener noreferrer"><button className="btn-secondary">🌐 Website</button></a>}
+            </div>
           </div>
-        </div>
 
         {/* Quick Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
@@ -175,6 +197,15 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
           </div>
         )}
       </div>
+
+      {college && (
+        <AIChatModal
+          isOpen={aiModalOpen}
+          onClose={() => setAiModalOpen(false)}
+          initialQuery={`Tell me more about ${college.name}, its ROI, placements, and how it compares to other top institutes.`}
+          contextCollegeIds={[college.id]}
+        />
+      )}
     </div>
   );
 }

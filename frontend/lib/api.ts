@@ -22,6 +22,12 @@ export const api = {
     });
     return res.json();
   },
+  sendAIChatMessage: async (message: string, contextCollegeIds?: (number | string)[]) => {
+    return api.post('/api/ai/chat', { message, contextCollegeIds });
+  },
+  getAISuggestions: async () => {
+    return api.get('/api/ai/suggested-questions');
+  },
 };
 
 export default API_URL;

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth';
 import Navbar from '@/components/Navbar';
+import AIChatButton from '@/components/AIChatButton';
 
 export const metadata: Metadata = {
   title: 'CollegeQuest — Discover Your Perfect College',
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <Navbar />
           <main>{children}</main>
+          <AIChatButton />
         </AuthProvider>
       </body>
     </html>
